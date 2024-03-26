@@ -31,3 +31,62 @@ The service is called "noc-mon.service" and calls the script "NOC-MON.sh" .
 
 [LOG file] 
 <p float="left"><img src="https://github.com/arthurddduarte86/my-linux-projects/blob/main/Ver1.0-simple-service/noc-mon04.JPG"></p>
+
+
+### Codes
+
+Code of: Service (noc-mon.service)
+```
+
+[Unit]
+Description=Service for: Keep ssh service always ON
+After=ssh.service
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/NOC-MON.sh
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
+
+```
+
+Code of: Script NOC-MON.sh (executor)
+```
+#!/bin/bash
+
+
+while true; do
+
+        # Executa o comando systemctl status ssh, filtra as informações relevantes e extrai a primeira palavra após ":"
+        status_info=$(systemctl status ssh | grep -E 'Active:|Main PID:' | grep -oP '(?<=: )[^\s]+')
+
+        # Imprime as informações obtidas
+        #echo "Status do serviço SSH:"
+        #echo "$status_info"
+
+        # Extrai o estado do serviço SSH
+        service_status=$(echo "$status_info" | sed -n '1p')
+
+        # Extrai o PID principal do serviço SSH
+        main_pid=$(echo "$status_info" | sed -n '2p')
+
+
+        # Verifica se o estado é diferente de "active"
+        if [ "$service_status" != "active" ]; then
+            echo "O serviço SSH não está ativo. Enviando sinal SIGTERM para o PID $main_pid..."
+            kill -SIGTERM "$main_pid"
+            echo "Sinal SIGTERM enviado para o PID $main_pid. Reiniciando o serviço SSH..."
+            systemctl restart ssh
+            status_info=$(systemctl status ssh | grep -E 'Active:|Main PID:' | grep -oP '(?<=: )[^\s]+')
+
+            #Comando abaixo apenas pra verificar se imprimir o estado atual do servico
+            #echo "$status_info" | sed -n '1p'
+
+        fi
+        #timer de 5segs
+        sleep 5
+done
+```
