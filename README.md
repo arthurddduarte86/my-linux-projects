@@ -26,8 +26,11 @@
 </p>  
 
 
+# My Raspberry-PI used to test and deploy the codes.
 
-  ## Information about versions and history line
+<p float="left"><img src="https://github.com/arthurddduarte86/my-linux-projects/blob/main/Ver2.0-service-monitor-NOC/raspberry-pi.jpg"></p>
+
+## Information about versions and history line
 
 ```
 Version 1.0
@@ -39,5 +42,10 @@ ensuring that the SSH Server is always ON, avoiding interruptions of remote conn
 The service is called "noc-mon.service" and calls the script "NOC-MON.sh" .
 ```
 
+```
+Version 2.0
+* Added service to keep the physical interface(s) IP addressing always on.
 
+The project is composed by two scripts, building a 'systemd service' avoiding interruptions of remote connections.
+```
 
